@@ -27,11 +27,17 @@ We use suffix (ids, raw-feats, raw-energy, raw-f0, norm-feats, and wave) for eac
 
 ## Example:
 ```
+tensorflow-tts-preprocess --rootdir ./LJSpeech-1.1 --outdir ./dump/dump_ljspeech --config ./conf/ljspeech_preprocess.yaml --dataset ljspeech
+
+tensorflow-tts-normalize --rootdir ./dump/dump_ljspeech --outdir ./dump/dump_ljspeech --config ./conf/ljspeech_preprocess.yaml --dataset ljspeech 
+```
+
+```
 tensorflow-tts-preprocess --rootdir C:\Users\josep\Projects\TTS_Text_Mel\training_data\LJSpeech-1.1 --outdir ./dump/dump_ljspeech --config ./configs/jspeech_preprocess.yaml --dataset ljspeech 
 tensorflow-tts-normalize --rootdir ./dump/dump_ljspeech --outdir ./dump/dump_ljspeech --config ./configs/jspeech_preprocess.yaml --dataset ljspeech 
 ```
 
-python ./ex_train.py --train-dir C:\Users\josep\Projects\TTS_Text_Mel\dump\dump_ljspeech\train\ --dev-dir C:\Users\josep\Projects\TTS_Text_Mel\dump\dump_ljspeech\valid --outdir ./exp/train.tacotron2.v1/  --config ./configs/tacotron2.v1.yaml --use-norm 1 --mixed_precision 0 --resume ""
+python ./ex_train.py --train-dir ./dump/dump_ljspeech/train/ --dev-dir ./dump/dump_ljspeech/valid --outdir ./exp/train.tacotron2.v1/  --config ./conf/tacotron2.v1.yaml --use-norm 1 --mixed_precision 0 --resume ""
 
 SET PATH=C:\tools\cuda\bin;%PATH%
 SET PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10\bin;%PATH%
