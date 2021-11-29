@@ -471,8 +471,7 @@ def main():
 
         _ = optimizer.iterations
 
-    c = **config
-    print(c.keys())
+    print(config.keys())
     gen_optimizer = tf.keras.optimizers.Adam(**config["generator_optimizer_params"])
     dis_optimizer = tf.keras.optimizers.Adam( **config["discriminator_optimizer_params"])
 
