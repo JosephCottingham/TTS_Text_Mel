@@ -142,6 +142,11 @@ class Tacotron2Trainer(GanBasedTrainer):
 
         # define feature-matching loss
         fm_loss = 0.0
+        print('[[]]]]')
+        for i in range(len(p)):
+            for j in range(len(p[i])):
+                print(p[i][j])
+        print('[[]]]]')
         for i in range(len(p_hat)):
             print(p[i])
             print(p_hat[i])
