@@ -129,6 +129,9 @@ class Tacotron2Trainer(GanBasedTrainer):
         p = self._discriminator(tf.expand_dims(mel_gts, 2))
         adv_loss = 0.0
         for i in range(len(p_hat)):
+            print(p_hat[i])
+        print('-----')
+        for i in range(len(p_hat)):
             adv_loss += calculate_3d_loss(
                 tf.ones_like(p_hat[i][-1]), p_hat[i][-1], loss_fn=self.mse_loss
             )
