@@ -427,7 +427,8 @@ def main():
         strategy=STRATEGY,
         steps=0,
         epochs=0,
-        is_mixed_precision=args.mixed_precision,
+        is_generator_mixed_precision=args.mixed_precision,
+        is_discriminator_mixed_precision=args.mixed_precision
     )
 
     with STRATEGY.scope():
