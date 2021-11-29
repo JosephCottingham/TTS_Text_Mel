@@ -432,12 +432,12 @@ def main():
         is_discriminator_mixed_precision=args.mixed_precision
     )
 
-    # with STRATEGY.scope():
-    #     # define model.
-    #     tacotron_config = Tacotron2Config(**config["tacotron2_params"])
-    #     tacotron2 = TFTacotron2(config=tacotron_config, name="tacotron2")
-    #     tacotron2._build()
-    #     tacotron2.summary()
+    with STRATEGY.scope():
+        # define model.
+        tacotron_config = Tacotron2Config(**config["tacotron2_params"])
+        tacotron2 = TFTacotron2(config=tacotron_config, name="tacotron2")
+        tacotron2._build()
+        tacotron2.summary()
 
     #     if len(args.pretrained) > 1:
     #         tacotron2.load_weights(args.pretrained, by_name=True, skip_mismatch=True)
