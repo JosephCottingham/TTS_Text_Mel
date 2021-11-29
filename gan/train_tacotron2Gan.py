@@ -21,7 +21,7 @@ from tqdm import tqdm
 import tensorflow_tts
 from tacotron_dataset import CharactorMelDataset
 from tensorflow_tts.configs.tacotron2 import Tacotron2Config
-from tensorflow_tts.models import TFTacotron2
+from tensorflow_tts.models import TFTacotron2, TFMelGANMultiScaleDiscriminator
 from tensorflow_tts.optimizers import AdamWeightDecay, WarmUp
 from tensorflow_tts.trainers import GanBasedTrainer
 from tensorflow_tts.utils import calculate_2d_loss, calculate_3d_loss, return_strategy
@@ -471,8 +471,22 @@ def main():
 
         _ = optimizer.iterations
 
+
+
+    gen_optimizer = tf.keras.optimizers.Adam(**config["generator_optimizer_params"])
+    dis_optimizer = tf.keras.optimizers.Adam(
+        **config["discriminator_optimizer_params"]
+    )
+
+    discriminator = TFMelGANMultiScaleDiscriminator(
+        MELGAN_CONFIG.MelGANDiscriminatorConfig(
+            **config["melgan_discriminator_params"]
+        ),
+        name="melgan_discriminator",
+    )
+
     # compile trainer
-    trainer.compile(model=tacotron2, optimizer=optimizer)
+    trainer.compile(gen_model=tacotron2, dis_model=discriminator, gen_optimizer=gen_optimizer, dis_optimizer=dis_optimizer)
 
     # start training
     try:
