@@ -100,7 +100,7 @@ melgan_discriminator_params:
     downsample_pooling: "AveragePooling1D"   # Pooling type for the input downsampling.
     downsample_pooling_params:        # Parameters of the above pooling function.
         pool_size: 4
-        strides: 2
+        strides: 3
     kernel_sizes: [5, 3]              # List of kernel size.
     filters: 16                       # Number of channels of the initial conv layer.
     max_downsample_filters: 1024      # Maximum number of channels of downsampling layers.

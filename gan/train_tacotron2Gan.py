@@ -110,7 +110,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         """
         mel_gts = batch["mel_gts"]
         y_hat = outputs
-
+        print(y_hat)
         p_hat = self._discriminator(y_hat)
         p = self._discriminator(tf.expand_dims(mel_gts, 2))
         adv_loss = 0.0
@@ -471,7 +471,6 @@ def main():
 
     #     _ = optimizer.iterations
 
-    print(config.keys())
     gen_optimizer = tf.keras.optimizers.Adam(**config["generator_optimizer_params"])
     dis_optimizer = tf.keras.optimizers.Adam( **config["discriminator_optimizer_params"])
 
