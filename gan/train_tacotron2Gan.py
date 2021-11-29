@@ -89,10 +89,10 @@ class Tacotron2Trainer(GanBasedTrainer):
         self.binary_crossentropy = tf.keras.losses.BinaryCrossentropy(
             from_logits=True, reduction=tf.keras.losses.Reduction.NONE
         )
-        self.mse = tf.keras.losses.MeanSquaredError(
+        self.mse_loss = tf.keras.losses.MeanSquaredError(
             reduction=tf.keras.losses.Reduction.NONE
         )
-        self.mae = tf.keras.losses.MeanAbsoluteError(
+        self.mae_loss = tf.keras.losses.MeanAbsoluteError(
             reduction=tf.keras.losses.Reduction.NONE
         )
 
