@@ -158,7 +158,7 @@ class Tacotron2Trainer(Seq2SeqBasedTrainer):
             stop_token_predictions,
             alignment_historys,
         ) = outputs
-
+                
         mel_loss_before = calculate_3d_loss(
             batch["mel_gts"], decoder_output, loss_fn=self.mae
         )
