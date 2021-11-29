@@ -23,7 +23,7 @@ from tacotron_dataset import CharactorMelDataset
 from tensorflow_tts.configs.tacotron2 import Tacotron2Config
 from tensorflow_tts.models import TFTacotron2
 from tensorflow_tts.optimizers import AdamWeightDecay, WarmUp
-from tensorflow_tts.trainers import Seq2SeqBasedTrainer
+from tensorflow_tts.trainers import GanBasedTrainer
 from tensorflow_tts.utils import calculate_2d_loss, calculate_3d_loss, return_strategy
 
 
