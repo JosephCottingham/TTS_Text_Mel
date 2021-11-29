@@ -13,7 +13,7 @@ def make_discriminator_model():
 
     model.add(layers.Flatten(name='Flatten1'))
 
-    model.add(layers.Dense(3000, name='Dense3'))
+    model.add(layers.Dense(2610000, name='Dense3'))
     model.add(layers.Dropout(0.3, name='Dropout3'))
 
     model.add(layers.Dense(1, name='Dense4'))
