@@ -472,11 +472,9 @@ def main():
         _ = optimizer.iterations
 
 
-
+    print(**config.keys())
     gen_optimizer = tf.keras.optimizers.Adam(**config["generator_optimizer_params"])
-    dis_optimizer = tf.keras.optimizers.Adam(
-        **config["discriminator_optimizer_params"]
-    )
+    dis_optimizer = tf.keras.optimizers.Adam( **config["discriminator_optimizer_params"])
 
     discriminator = TFMelGANMultiScaleDiscriminator(
         MELGAN_CONFIG.MelGANDiscriminatorConfig(
