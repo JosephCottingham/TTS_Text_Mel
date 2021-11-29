@@ -11,8 +11,6 @@ def make_discriminator_model():
     model.add(layers.Dense(3000, name='Dense2'))
     model.add(layers.Dropout(0.3, name='Dropout2'))
 
-    model.add(layers.Flatten(name='Flatten1'))
-
     model.add(layers.Dense(261, name='Dense3'))
     model.add(layers.Dropout(0.3, name='Dropout3'))
 
