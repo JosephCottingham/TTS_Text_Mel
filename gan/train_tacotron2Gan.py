@@ -132,6 +132,9 @@ class Tacotron2Trainer(GanBasedTrainer):
             print(p_hat[i])
         print('-----')
         for i in range(len(p_hat)):
+            print(p_hat[i][-1])
+        print('+++++')
+        for i in range(len(p_hat)):
             adv_loss += calculate_3d_loss(
                 tf.ones_like(p_hat[i][-1]), p_hat[i][-1], loss_fn=self.mse_loss
             )
