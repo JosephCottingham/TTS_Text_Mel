@@ -431,45 +431,44 @@ def main():
         is_discriminator_mixed_precision=args.mixed_precision
     )
 
-    with STRATEGY.scope():
-        # define model.
-        tacotron_config = Tacotron2Config(**config["tacotron2_params"])
-        tacotron2 = TFTacotron2(config=tacotron_config, name="tacotron2")
-        tacotron2._build()
-        tacotron2.summary()
+    # with STRATEGY.scope():
+    #     # define model.
+    #     tacotron_config = Tacotron2Config(**config["tacotron2_params"])
+    #     tacotron2 = TFTacotron2(config=tacotron_config, name="tacotron2")
+    #     tacotron2._build()
+    #     tacotron2.summary()
 
-        if len(args.pretrained) > 1:
-            tacotron2.load_weights(args.pretrained, by_name=True, skip_mismatch=True)
-            logging.info(
-                f"Successfully loaded pretrained weight from {args.pretrained}."
-            )
+    #     if len(args.pretrained) > 1:
+    #         tacotron2.load_weights(args.pretrained, by_name=True, skip_mismatch=True)
+    #         logging.info(
+    #             f"Successfully loaded pretrained weight from {args.pretrained}."
+    #         )
 
-        # AdamW for tacotron2
-        learning_rate_fn = tf.keras.optimizers.schedules.PolynomialDecay(
-            initial_learning_rate=config["optimizer_params"]["initial_learning_rate"],
-            decay_steps=config["optimizer_params"]["decay_steps"],
-            end_learning_rate=config["optimizer_params"]["end_learning_rate"],
-        )
+    #     # AdamW for tacotron2
+    #     learning_rate_fn = tf.keras.optimizers.schedules.PolynomialDecay(
+    #         initial_learning_rate=config["optimizer_params"]["initial_learning_rate"],
+    #         decay_steps=config["optimizer_params"]["decay_steps"],
+    #         end_learning_rate=config["optimizer_params"]["end_learning_rate"],
+    #     )
 
-        learning_rate_fn = WarmUp(
-            initial_learning_rate=config["optimizer_params"]["initial_learning_rate"],
-            decay_schedule_fn=learning_rate_fn,
-            warmup_steps=int(
-                config["train_max_steps"]
-                * config["optimizer_params"]["warmup_proportion"]
-            ),
-        )
+    #     learning_rate_fn = WarmUp(
+    #         initial_learning_rate=config["optimizer_params"]["initial_learning_rate"],
+    #         decay_schedule_fn=learning_rate_fn,
+    #         warmup_steps=int(
+    #             config["train_max_steps"]*config["optimizer_params"]["warmup_proportion"]
+    #         ),
+    #     )
 
-        optimizer = AdamWeightDecay(
-            learning_rate=learning_rate_fn,
-            weight_decay_rate=config["optimizer_params"]["weight_decay"],
-            beta_1=0.9,
-            beta_2=0.98,
-            epsilon=1e-6,
-            exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"],
-        )
+    #     optimizer = AdamWeightDecay(
+    #         learning_rate=learning_rate_fn,
+    #         weight_decay_rate=config["optimizer_params"]["weight_decay"],
+    #         beta_1=0.9,
+    #         beta_2=0.98,
+    #         epsilon=1e-6,
+    #         exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"],
+    #     )
 
-        _ = optimizer.iterations
+    #     _ = optimizer.iterations
 
     print(config.keys())
     gen_optimizer = tf.keras.optimizers.Adam(**config["generator_optimizer_params"])
