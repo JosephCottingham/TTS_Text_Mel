@@ -118,12 +118,14 @@ class Tacotron2Trainer(GanBasedTrainer):
 
         # [[32, None, 80], [32, None, 80], [32, None], [32, 188, None]]
 
+        print('mel_outputs')
         print(mel_outputs)
         p_hat = self._discriminator(mel_outputs)
+        print('p_hat')
         print(p_hat)
         for x in p_hat:
             print(x)
-            
+
         p = self._discriminator(tf.expand_dims(mel_gts, 2))
         adv_loss = 0.0
         for i in range(len(p_hat)):
