@@ -21,6 +21,7 @@ from tqdm import tqdm
 import tensorflow_tts
 from tacotron_dataset import CharactorMelDataset
 from tensorflow_tts.configs.tacotron2 import Tacotron2Config
+import tensorflow_tts.configs.melgan as MELGAN_CONFIG
 from tensorflow_tts.models import TFTacotron2, TFMelGANMultiScaleDiscriminator
 from tensorflow_tts.optimizers import AdamWeightDecay, WarmUp
 from tensorflow_tts.trainers import GanBasedTrainer
