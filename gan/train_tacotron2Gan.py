@@ -144,7 +144,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         fm_loss = 0.0
         for i in range(len(p_hat)):
             for j in range(len(p_hat[i]) - 1):
-                fm_loss += calculate_3d_loss(
+                fm_loss += calculate_2d_loss(
                     p[i][j], p_hat[i][j], loss_fn=self.mae_loss
                 )
         fm_loss /= (i + 1) * (j + 1)
