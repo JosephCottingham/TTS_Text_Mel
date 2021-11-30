@@ -277,9 +277,7 @@ class GanBasedTrainer(BasedTrainer):
         if self._already_apply_input_signature is False:
             train_element_signature = self._get_train_element_signature()
             eval_element_signature = self._get_eval_element_signature()
-            self.one_step_forward = tf.function(
-                self._one_step_forward, input_signature=[train_element_signature]
-            )
+            self.one_step_forward = self._one_step_forward
             self.one_step_evaluate = tf.function(
                 self._one_step_evaluate, input_signature=[eval_element_signature]
             )
@@ -297,7 +295,7 @@ class GanBasedTrainer(BasedTrainer):
         self._check_train_finish()
 
     def _one_step_forward(self, batch):
-        self._strategy.run(self._one_step_forward_per_replica)
+        self._strategy.run(self._one_step_forward_per_replica, args=(batch,))
         per_replica_losses= .1
         return self._strategy.reduce(
             tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
@@ -423,8 +421,7 @@ class GanBasedTrainer(BasedTrainer):
             return per_replica_dis_losses
 
 
-    def _one_step_forward_per_replica(self):
-        return
+    def _one_step_forward_per_replica(self, batch):
         per_replica_gen_losses = 0.0
         per_replica_dis_losses = 0.0
         print('Replicas: ', self._strategy.num_replicas_in_sync)
