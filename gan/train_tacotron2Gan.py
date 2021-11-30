@@ -530,8 +530,8 @@ def main():
         gen_optimizer = tf.keras.optimizers.Adam(**config["generator_optimizer_params"])
         dis_optimizer = tf.keras.optimizers.Adam( **config["discriminator_optimizer_params"])
 
-    discriminator = make_discriminator_model()
-    discriminator.summary()
+        discriminator = make_discriminator_model()
+        discriminator.summary()
 
     # compile trainer
     trainer.compile(gen_model=tacotron2, dis_model=discriminator, gen_optimizer=gen_optimizer, dis_optimizer=dis_optimizer)
