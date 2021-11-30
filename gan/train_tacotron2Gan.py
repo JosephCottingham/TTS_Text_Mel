@@ -212,6 +212,8 @@ class Tacotron2Trainer(GanBasedTrainer):
             "dis_loss": dis_loss,
         }
 
+        print('-----------------')
+
         return per_example_losses, dict_metrics_losses
 
     def generate_and_save_intermediate_result(self, batch):
