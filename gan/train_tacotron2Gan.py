@@ -138,6 +138,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         for i in range(len(p_hat)):
             print(p_hat[i])
             print(p[i])
+            print(tf.shape(p[i]))
             fm_loss += calculate_2d_loss(
                 p[i], p_hat[i], loss_fn=self.mae_loss
             )
