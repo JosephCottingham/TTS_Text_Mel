@@ -180,9 +180,10 @@ class Tacotron2Trainer(GanBasedTrainer):
         mel_outputs.set_shape([32, 870, 80, 1])
 
         mel_gts = tf.expand_dims(mel_gts, 3)
-
+        print(mel_outputs.get_shape())
         p_hat = self._discriminator(mel_outputs)
 
+        print(mel_gts.get_shape())
         p = self._discriminator(mel_gts)
 
         real_loss = 0.0
