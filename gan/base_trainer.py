@@ -274,7 +274,7 @@ class GanBasedTrainer(BasedTrainer):
         self.set_dis_optimizer(dis_optimizer)
 
     def _train_step(self, batch):
-        if self._already_apply_input_signature is False and 1 = 2:
+        if self._already_apply_input_signature is False and 1 == 2:
             train_element_signature = self._get_train_element_signature()
             eval_element_signature = self._get_eval_element_signature()
             self.one_step_forward = tf.function(
