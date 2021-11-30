@@ -287,9 +287,9 @@ class GanBasedTrainer(BasedTrainer):
                 self._one_step_predict, input_signature=[eval_element_signature]
             )
             self._already_apply_input_signature = True
-
-        # run one_step_forward
-        self.one_step_forward(batch)
+        with tf.device("/GPU:0"):
+            # run one_step_forward
+            self.one_step_forward(batch)
 
         # update counts
         self.steps += 1
