@@ -175,7 +175,7 @@ class Tacotron2Trainer(GanBasedTrainer):
                 tf.ones_like(p), p, loss_fn=self.mse_loss
             )
             print('-', end=' ')
-            fake_loss += calculate_2d_loss(
+            fake_loss += calculate_3d_loss(
                 tf.zeros_like(p_hat[i]), p_hat[i], loss_fn=self.mse_loss
             )
             print('+', end=' ')
