@@ -3,7 +3,7 @@ from tensorflow.keras import layers
 
 def make_discriminator_model():
     model = tf.keras.Sequential()
-    model.add(layers.Conv1D(80, (32,), strides=(2), padding='same', input_shape=(32, 870), name='Conv1D1'))
+    model.add(layers.Conv1D(80, (32,), strides=(2), padding='same', input_shape=(32, None), name='Conv1D1'))
     model.add(layers.Dense(3000, name='Dense1'))
     model.add(layers.Dropout(0.3, name='Dropout1'))
 
