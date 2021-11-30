@@ -297,6 +297,8 @@ class GanBasedTrainer(BasedTrainer):
         self._check_train_finish()
 
     def _one_step_forward(self, batch):
+        print('Batch')
+        print(type(batch))
         batch = tf.Variable(batch)
         per_replica_losses=self._strategy.run(
             self._one_step_forward_per_replica,
