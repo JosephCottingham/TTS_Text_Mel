@@ -150,7 +150,7 @@ class Tacotron2Trainer(GanBasedTrainer):
                 )
         fm_loss /= (i + 1)
         adv_loss += self.config["lambda_feat_match"] # * fm_loss
-
+        print('---------')
         per_example_losses = adv_loss
 
         dict_metrics_losses = {
@@ -163,17 +163,27 @@ class Tacotron2Trainer(GanBasedTrainer):
 
 
     def compute_per_example_discriminator_losses(self, batch, gen_outputs):
+        # Real data
         mel_gts = batch["mel_gts"]
-        y_hat = gen_outputs[1]
-        
-        print('mel_gts')
-        print(mel_gts)
-        print('gen_outputs')
-        print(gen_outputs)
+        # outputs from generator
+        (
+            decoder_output,
+            mel_outputs,
+            stop_token_predictions,
+            alignment_historys,
+        ) = outputs
 
-        p = self._discriminator(tf.expand_dims(mel_gts, 2))
-        p_hat = self._discriminator(y_hat)
+        mel_outputs.set_shape([32, 870, 80])
+        mel_outputs = tf.expand_dims(mel_outputs, 3)
+        mel_outputs.set_shape([32, 870, 80, 1])
 
+        mel_gts = tf.expand_dims(mel_gts, 3)
+        print('aaaaaaaaaaaaaa')
+
+        p_hat = self._discriminator(mel_outputs)
+
+        p = self._discriminator(mel_gts)
+        print('++++++++++++++')
         real_loss = 0.0
         fake_loss = 0.0
         print(p)
