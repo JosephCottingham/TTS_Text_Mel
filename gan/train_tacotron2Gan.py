@@ -182,19 +182,21 @@ class Tacotron2Trainer(GanBasedTrainer):
         ) = gen_outputs
 
         print('mel_outputs')
+
         mel_outputs.set_shape([32, 870, 80])
         mel_outputs = tf.expand_dims(mel_outputs, 3)
         mel_outputs.set_shape([32, 870, 80, 1])
-        print(mel_outputs.get_shape())
-        mel_outputs = tf.expand_dims(mel_outputs, 1)
+        mel_outputs = tf.expand_dims(mel_outputs, 0)
         print(mel_outputs.get_shape())
 
         print('mel_gts')
+
         mel_gts = tf.expand_dims(mel_gts, 3)
+        mel_gts = tf.expand_dims(mel_gts, 0)
         print(mel_gts.get_shape())
+
         p_hat = self._discriminator(mel_outputs)
 
-        print(mel_gts.get_shape())
         p = self._discriminator(mel_gts)
 
         real_loss = 0.0
@@ -202,11 +204,11 @@ class Tacotron2Trainer(GanBasedTrainer):
 
         for i in range(len(p)):
             d = tf.squeeze(p[i])
-            real_loss += calculate_2d_loss(
+            real_loss += calculate_3d_loss(
                 tf.ones_like(d), d, loss_fn=self.mse_loss
             )
             d = tf.squeeze(p_hat[i])
-            fake_loss += calculate_2d_loss(
+            fake_loss += calculate_3d_loss(
                 tf.zeros_like(d), d, loss_fn=self.mse_loss
             )
 
