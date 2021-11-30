@@ -121,7 +121,7 @@ class Tacotron2Trainer(GanBasedTrainer):
 
         p_hat = self._discriminator(mel_outputs)
 
-        p = tf.squeeze(self._discriminator(tf.expand_dims(mel_gts, 2)))
+        p = self._discriminator(mel_gts)
         adv_loss = 0.0
 
 
