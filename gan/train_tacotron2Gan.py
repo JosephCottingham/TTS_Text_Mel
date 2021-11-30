@@ -370,7 +370,7 @@ def main():
 
     # return strategy
     STRATEGY = return_strategy()
-    STRATEGY = tf.distribute.OneDeviceStrategy(device="/gpu:0")
+
     # set mixed precision config
     if args.mixed_precision == 1:
         tf.config.optimizer.set_experimental_options({"auto_mixed_precision": True})

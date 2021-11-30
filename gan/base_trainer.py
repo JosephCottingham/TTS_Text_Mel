@@ -477,10 +477,10 @@ class GanBasedTrainer(BasedTrainer):
                 print(zip(gradients, self._discriminator.trainable_variables))
                 for g in gradients:
                     print(g)
-                with self._strategy.scope():
-                    self._dis_optimizer.apply_gradients(
-                        zip(gradients, self._discriminator.trainable_variables)
-                    )
+
+                self._dis_optimizer.apply_gradients(
+                    zip(gradients, self._discriminator.trainable_variables)
+                )
             else:
                 # gradient acummulation here.
                 for i in tf.range(self.config["gradient_accumulation_steps"]):
