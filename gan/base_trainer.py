@@ -399,7 +399,7 @@ class GanBasedTrainer(BasedTrainer):
             scaled_per_replica_dis_losses = self._dis_optimizer.get_scaled_loss(
                 per_replica_dis_losses
             )
-
+    
         if self._is_discriminator_mixed_precision:
             scaled_gradients = tf.gradients(
                 scaled_per_replica_dis_losses,
@@ -473,6 +473,7 @@ class GanBasedTrainer(BasedTrainer):
                 print('gradients')
                 print(np.array(gradients).shape)
                 print(np.array(self._discriminator.trainable_variables).shape)
+                print(np.array(zip(gradients, self._discriminator.trainable_variables)).shape)
                 self._dis_optimizer.apply_gradients(
                     zip(gradients, self._discriminator.trainable_variables)
                 )
