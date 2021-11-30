@@ -135,7 +135,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         print('vvvvvvvvvv')
 
         adv_loss = 0.0
-        print(tf.squeeze(p_hat[i]).get_shape())
+        print(tf.squeeze(p_hat[0]).get_shape())
         # Aderstandal loss
         for i in range(len(p_hat)):
             adv_loss += calculate_3d_loss(
