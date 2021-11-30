@@ -298,7 +298,9 @@ class GanBasedTrainer(BasedTrainer):
         self._check_train_finish()
 
     def _one_step_forward(self, batch):
-        per_replica_losses = .5
+        per_replica_losses = (
+            self._one_step_forward_per_replica, args=(batch,)
+        )
         return self._strategy.reduce(
             tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
         )
@@ -839,6 +841,7 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
             return per_replica_losses
 
     def _one_step_forward_per_replica(self, batch):
+        print(self.config["gradient_accumulation_steps"])
         if self.config["gradient_accumulation_steps"] == 1:
             gradients, per_replica_losses = self._calculate_gradient_per_batch(batch)
             self._optimizer.apply_gradients(
