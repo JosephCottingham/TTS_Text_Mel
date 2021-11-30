@@ -471,8 +471,8 @@ class GanBasedTrainer(BasedTrainer):
                     per_replica_dis_losses,
                 ) = self._calculate_discriminator_gradient_per_batch(batch)
                 print('gradients')
-                # print(gradients.get_shape())
-                print(self._discriminator.trainable_variables.get_shape)
+                print(np.array(gradients).shape)
+                print(np.array(self._discriminator.trainable_variables).shape)
                 self._dis_optimizer.apply_gradients(
                     zip(gradients, self._discriminator.trainable_variables)
                 )
