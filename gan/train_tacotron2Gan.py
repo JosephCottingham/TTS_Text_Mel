@@ -139,17 +139,19 @@ class Tacotron2Trainer(GanBasedTrainer):
         # Aderstandal loss
         for i in range(len(p_hat)):
             d = tf.squeeze(p_hat[i])
-            adv_loss += calculate_3d_loss(
+            adv_loss += calculate_2d_loss(
                 tf.ones_like(d), d, loss_fn=self.mse_loss
             )
         adv_loss /= i + 1
 
         # Feature Matching Loss
         fm_loss = 0.0
+        print(tf.squeeze(p[0]).get_shape())
+        print(tf.squeeze(p_hat[0]).get_shape())
 
         for i in range(len(p_hat)):
             fm_loss += calculate_3d_loss(
-                p[i], p_hat[i], loss_fn=self.mae_loss
+                tf.squeeze(p[i]), tf.squeeze(p_hat[i]), loss_fn=self.mae_loss
             )
         fm_loss /= (i + 1)
         adv_loss += self.config["lambda_feat_match"] # * fm_loss
