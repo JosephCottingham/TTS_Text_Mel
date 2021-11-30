@@ -520,7 +520,7 @@ def main():
         except KeyboardInterrupt:
             trainer.save_checkpoint()
             logging.info(f"Successfully saved checkpoint @ {trainer.steps}steps.")
-`
+
 
 if __name__ == "__main__":
     main()
