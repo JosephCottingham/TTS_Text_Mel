@@ -163,7 +163,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         print('y_hat')
         print(y_hat)
 
-        p = self._discriminator(mel_gts)
+        p = self._discriminator(tf.expand_dims(mel_gts, 2))
         p_hat = self._discriminator(y_hat)
 
         real_loss = 0.0
