@@ -178,7 +178,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         mel_outputs.set_shape([32, 870, 80])
         mel_outputs = tf.expand_dims(mel_outputs, 3)
         mel_outputs.set_shape([32, 870, 80, 1])
-
+        print('fasdf')
         mel_gts = tf.expand_dims(mel_gts, 3)
         print(mel_outputs.get_shape())
         p_hat = self._discriminator(mel_outputs)
