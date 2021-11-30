@@ -126,6 +126,8 @@ class Tacotron2Trainer(GanBasedTrainer):
         mel_outputs = tf.expand_dims(mel_outputs, 3)
         mel_outputs.set_shape([32, 870, 80, 1])
         print(mel_outputs.get_shape())
+        mel_outputs = tf.expand_dims(mel_outputs, 0)
+        print(mel_outputs.get_shape())
 
         print('mel_gts')
         mel_gts = tf.expand_dims(mel_gts, 3)
