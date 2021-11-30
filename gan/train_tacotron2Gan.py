@@ -127,12 +127,9 @@ class Tacotron2Trainer(GanBasedTrainer):
 
         mel_gts = tf.expand_dims(mel_gts, 3)
 
-        print('xxxxxxxxxx')
-
         p_hat = self._discriminator(mel_outputs)
 
         p = self._discriminator(mel_gts)
-        print('vvvvvvvvvv')
 
         adv_loss = 0.0
         print(tf.squeeze(p_hat[0]).get_shape())
@@ -155,7 +152,7 @@ class Tacotron2Trainer(GanBasedTrainer):
             )
         fm_loss /= (i + 1)
         adv_loss += self.config["lambda_feat_match"] # * fm_loss
-        print('---------')
+
         per_example_losses = adv_loss
 
         dict_metrics_losses = {
@@ -176,7 +173,7 @@ class Tacotron2Trainer(GanBasedTrainer):
             mel_outputs,
             stop_token_predictions,
             alignment_historys,
-        ) = outputs
+        ) = gen_outputs
 
         mel_outputs.set_shape([32, 870, 80])
         mel_outputs = tf.expand_dims(mel_outputs, 3)
