@@ -478,7 +478,7 @@ class GanBasedTrainer(BasedTrainer):
                 for g in gradients:
                     print(g)
                 self._dis_optimizer.apply_gradients(
-                    np.array(gradients)
+                    zip(gradients, self._discriminator.trainable_variables)
                 )
             else:
                 # gradient acummulation here.
