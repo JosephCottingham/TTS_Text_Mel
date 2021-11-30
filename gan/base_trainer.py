@@ -474,6 +474,7 @@ class GanBasedTrainer(BasedTrainer):
                 print(np.array(gradients).shape)
                 print(np.array(self._discriminator.trainable_variables).shape)
                 print(np.array(zip(gradients, self._discriminator.trainable_variables)).shape)
+                print(zip(gradients, self._discriminator.trainable_variables).shape)
                 self._dis_optimizer.apply_gradients(
                     zip(gradients, self._discriminator.trainable_variables)
                 )
