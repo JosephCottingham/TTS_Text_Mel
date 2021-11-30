@@ -166,7 +166,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         fake_loss = 0.0
         print(p)
         for i in range(len(p)):
-            real_loss += calculate_2d_loss(
+            real_loss += calculate_3d_loss(
                 tf.ones_like(p), p, loss_fn=self.mse_loss
             )
             fake_loss += calculate_2d_loss(
