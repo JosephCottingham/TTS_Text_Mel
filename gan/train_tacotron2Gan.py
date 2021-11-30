@@ -122,7 +122,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         print('mel_outputs')
         print(mel_outputs)
 
-        p_hat = self._discriminator(mel_outputs)
+        # p_hat = self._discriminator(mel_outputs)
 
         p = self._discriminator(mel_gts)
         adv_loss = 0.0
