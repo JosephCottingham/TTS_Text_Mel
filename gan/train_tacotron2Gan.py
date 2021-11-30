@@ -185,20 +185,20 @@ class Tacotron2Trainer(GanBasedTrainer):
         p_hat = self._discriminator(mel_outputs)
 
         p = self._discriminator(mel_gts)
-        print('++++++++++++++')
+
         real_loss = 0.0
         fake_loss = 0.0
-        print(p)
+
         for i in range(len(p)):
-            print('z', end=' ')
+            d = tf.squeeze(p[i])
             real_loss += calculate_3d_loss(
-                tf.ones_like(p[i]), p[i], loss_fn=self.mse_loss
+                tf.ones_like(d), d, loss_fn=self.mse_loss
             )
-            print('-', end=' ')
+            d = tf.squeeze(p_hat[i])
             fake_loss += calculate_2d_loss(
-                tf.zeros_like(p_hat[i]), p_hat[i], loss_fn=self.mse_loss
+                tf.zeros_like(d), d, loss_fn=self.mse_loss
             )
-            print('+', end=' ')
+
         real_loss /= i + 1
         fake_loss /= i + 1
         dis_loss = real_loss + fake_loss
