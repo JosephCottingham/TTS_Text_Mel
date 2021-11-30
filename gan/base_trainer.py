@@ -297,12 +297,11 @@ class GanBasedTrainer(BasedTrainer):
         self._check_train_finish()
 
     def _one_step_forward(self, batch):
-        pass
-        # self._strategy.run(self._one_step_forward_per_replica, args=(batch,))
-        # per_replica_losses= .1
-        # return self._strategy.reduce(
-        #     tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
-        # )
+        self._strategy.run(self._one_step_forward_per_replica, args=(batch,))
+        per_replica_losses= .1
+        return self._strategy.reduce(
+            tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
+        )
 
     @abc.abstractmethod
     def compute_per_example_generator_losses(self, batch, outputs):
@@ -427,40 +426,38 @@ class GanBasedTrainer(BasedTrainer):
     def _one_step_forward_per_replica(self, batch):
         per_replica_gen_losses = 0.0
         per_replica_dis_losses = 0.0
-        print('Replicas: ', self._strategy.num_replicas_in_sync)
-        if self.config["gradient_accumulation_steps"] == 1:
-            (
-                gradients,
-                per_replica_gen_losses,
-            ) = self._calculate_generator_gradient_per_batch(batch)
-            self._gen_optimizer.apply_gradients(
-                zip(gradients, self._generator.trainable_variables)
-            )
-        else:
-            # gradient acummulation here.
-            for i in tf.range(self.config["gradient_accumulation_steps"]):
-                reduced_batch = {
-                    k: v[
-                        i
-                        * self.config["batch_size"] : (i + 1)
-                        * self.config["batch_size"]
-                    ]
-                    for k, v in batch.items()
-                }
+        # print('Replicas: ', self._strategy.num_replicas_in_sync)
+        # if self.config["gradient_accumulation_steps"] == 1:
+        #     (
+        #         gradients,
+        #         per_replica_gen_losses,
+        #     ) = self._calculate_generator_gradient_per_batch(batch)
+        #     self._gen_optimizer.apply_gradients(
+        #         zip(gradients, self._generator.trainable_variables)
+        #     )
+        # else:
+        #     # gradient acummulation here.
+        #     for i in tf.range(self.config["gradient_accumulation_steps"]):
+        #         reduced_batch = {
+        #             k: v[
+        #                 i * self.config["batch_size"] : (i + 1) * self.config["batch_size"]
+        #             ]
+        #             for k, v in batch.items()
+        #         }
 
-                # run 1 step accumulate
-                reduced_batch_losses = self._calculate_generator_gradient_per_batch(
-                    reduced_batch
-                )
+        #         # run 1 step accumulate
+        #         reduced_batch_losses = self._calculate_generator_gradient_per_batch(
+        #             reduced_batch
+        #         )
 
-                # sum per_replica_losses
-                per_replica_gen_losses += reduced_batch_losses
+        #         # sum per_replica_losses
+        #         per_replica_gen_losses += reduced_batch_losses
 
-            gradients = self._generator_gradient_accumulator.gradients
-            self._gen_optimizer.apply_gradients(
-                zip(gradients, self._generator.trainable_variables)
-            )
-            self._generator_gradient_accumulator.reset()
+        #     gradients = self._generator_gradient_accumulator.gradients
+        #     self._gen_optimizer.apply_gradients(
+        #         zip(gradients, self._generator.trainable_variables)
+        #     )
+        #     self._generator_gradient_accumulator.reset()
 
         # one step discriminator
         # recompute y_hat after 1 step generator for discriminator training.
