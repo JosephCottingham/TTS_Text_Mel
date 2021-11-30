@@ -427,7 +427,7 @@ class GanBasedTrainer(BasedTrainer):
     def _one_step_forward_per_replica(self, batch):
         per_replica_gen_losses = 0.0
         per_replica_dis_losses = 0.0
-
+        print('Replicas: ', self._strategy.num_replicas_in_sync)
         if self.config["gradient_accumulation_steps"] == 1:
             (
                 gradients,
