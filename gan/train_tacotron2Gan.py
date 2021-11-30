@@ -157,11 +157,13 @@ class Tacotron2Trainer(GanBasedTrainer):
 
     def compute_per_example_discriminator_losses(self, batch, gen_outputs):
         mel_gts = batch["mel_gts"]
+        print(type(mel_gts))
         y_hat = gen_outputs[1]
+        
         print('mel_gts')
         print(mel_gts)
-        print('y_hat')
-        print(y_hat)
+        print('gen_outputs')
+        print(gen_outputs)
 
         p = self._discriminator(tf.expand_dims(mel_gts, 2))
         p_hat = self._discriminator(y_hat)
