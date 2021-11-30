@@ -175,12 +175,17 @@ class Tacotron2Trainer(GanBasedTrainer):
             alignment_historys,
         ) = gen_outputs
 
+        print('mel_outputs')
         mel_outputs.set_shape([32, 870, 80])
         mel_outputs = tf.expand_dims(mel_outputs, 3)
         mel_outputs.set_shape([32, 870, 80, 1])
-        print('fasdf')
-        mel_gts = tf.expand_dims(mel_gts, 3)
         print(mel_outputs.get_shape())
+        mel_outputs = tf.expand_dims(mel_outputs, 1)
+        print(mel_outputs.get_shape())
+
+        print('mel_gts')
+        mel_gts = tf.expand_dims(mel_gts, 3)
+        print(mel_gts.get_shape())
         p_hat = self._discriminator(mel_outputs)
 
         print(mel_gts.get_shape())
