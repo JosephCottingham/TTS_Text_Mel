@@ -299,14 +299,15 @@ class GanBasedTrainer(BasedTrainer):
     def _one_step_forward(self, batch):
         print('Batch')
         print(type(batch))
-        batch = tf.Variable(batch)
-        per_replica_losses=self._strategy.run(
-            self._one_step_forward_per_replica,
-            args=(batch,)
-        )
-        return self._strategy.reduce(
-            tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
-        )
+        with self._strategy.scope():
+            batch = tf.Variable(batch)
+            per_replica_losses=self._strategy.run(
+                self._one_step_forward_per_replica,
+                args=(batch,)
+            )
+            return self._strategy.reduce(
+                tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
+            )
 
     @abc.abstractmethod
     def compute_per_example_generator_losses(self, batch, outputs):
