@@ -274,8 +274,6 @@ class GanBasedTrainer(BasedTrainer):
         self.set_dis_optimizer(dis_optimizer)
 
     def _train_step(self, batch):
-        print('_already_apply_input_signature')
-        print(self._already_apply_input_signature)
         if self._already_apply_input_signature is False:
             train_element_signature = self._get_train_element_signature()
             eval_element_signature = self._get_eval_element_signature()
@@ -291,7 +289,7 @@ class GanBasedTrainer(BasedTrainer):
             self._already_apply_input_signature = True
 
         # run one_step_forward
-        self._one_step_forward(batch)
+        self.one_step_forward(batch)
 
         # update counts
         self.steps += 1
