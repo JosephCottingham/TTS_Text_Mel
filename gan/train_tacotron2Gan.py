@@ -153,7 +153,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         # print(tf.squeeze(p_hat[0]).get_shape())
 
         for i in range(len(p_hat)):
-            fm_loss += calculate_2d_loss(
+            fm_loss += calculate_3d_loss(
                 tf.squeeze(p[i]), tf.squeeze(p_hat[i]), loss_fn=self.mae_loss
             )
         fm_loss /= (i + 1)
