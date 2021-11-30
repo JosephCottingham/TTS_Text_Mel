@@ -297,8 +297,8 @@ class GanBasedTrainer(BasedTrainer):
         self._check_train_finish()
 
     def _one_step_forward(self, batch):
-        print(type(batch))
-        per_replica_losses=self._one_step_forward_per_replica(batch)
+        with self._strategy.scope():
+            per_replica_losses=self._one_step_forward_per_replica(batch)
         
         return self._strategy.reduce(
             tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
