@@ -108,7 +108,10 @@ class Tacotron2Trainer(GanBasedTrainer):
             per_example_losses: per example losses for each GPU, shape [B]
             dict_metrics_losses: dictionary loss.
         """
+        # Real data
         mel_gts = batch["mel_gts"]
+
+        # outputs from generator
         (
             decoder_output,
             mel_outputs,
@@ -126,7 +129,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         mel_outputs.set_shape([32, 870, 80])
         print(mel_outputs.get_shape())
 
-        mel_outputs = tf.expand_dims(mel_outputs, 0)
+        mel_outputs = tf.expand_dims(mel_outputs, 3)
         print(mel_outputs.get_shape())
 
         mel_outputs.set_shape([32, 870, 80, 1])
