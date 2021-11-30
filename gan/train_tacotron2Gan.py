@@ -122,8 +122,12 @@ class Tacotron2Trainer(GanBasedTrainer):
         print('mel_outputs')
         print(mel_outputs)
         print(mel_outputs.get_shape())
-        
+
+        mel_outputs = np.expand_dims(mel_outputs, axis=0)
+        print(mel_outputs.get_shape())
+
         mel_outputs = mel_outputs.set_shape([32, 870, 80, 1])
+        print(mel_outputs.get_shape())
 
         p_hat = self._discriminator(mel_outputs)
 
