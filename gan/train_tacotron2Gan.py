@@ -501,26 +501,26 @@ def main():
         discriminator = make_discriminator_model()
         discriminator.summary()
 
-    # compile trainer
-    trainer.compile(
-        gen_model=tacotron2,
-        dis_model=discriminator,
-        gen_optimizer=gen_optimizer,
-        dis_optimizer=dis_optimizer
-    )
-
-    # start training
-    try:
-        trainer.fit(
-            train_dataset,
-            valid_dataset,
-            saved_path=os.path.join(config["outdir"], "checkpoints/"),
-            resume=args.resume,
+        # compile trainer
+        trainer.compile(
+            gen_model=tacotron2,
+            dis_model=discriminator,
+            gen_optimizer=gen_optimizer,
+            dis_optimizer=dis_optimizer
         )
-    except KeyboardInterrupt:
-        trainer.save_checkpoint()
-        logging.info(f"Successfully saved checkpoint @ {trainer.steps}steps.")
 
+        # start training
+        try:
+            trainer.fit(
+                train_dataset,
+                valid_dataset,
+                saved_path=os.path.join(config["outdir"], "checkpoints/"),
+                resume=args.resume,
+            )
+        except KeyboardInterrupt:
+            trainer.save_checkpoint()
+            logging.info(f"Successfully saved checkpoint @ {trainer.steps}steps.")
+`
 
 if __name__ == "__main__":
     main()
