@@ -134,22 +134,23 @@ class Tacotron2Trainer(GanBasedTrainer):
         adv_loss /= i + 1
 
         # define feature-matching loss
-        fm_loss = 0.0
-        for i in range(len(p_hat)):
-            print(p_hat[i])
-            print(p[i])
-            print(tf.shape(p[i]))
-            fm_loss += calculate_2d_loss(
-                p, p_hat[i], loss_fn=self.mae_loss
-            )
-        fm_loss /= (i + 1)
-        adv_loss += self.config["lambda_feat_match"] * fm_loss
+        # fm_loss = 0.0
+        # print(p)
+        # for i in range(len(p_hat)):
+        #     print(p_hat[i])
+        #     print(p[i])
+        #     print(tf.shape(p[i]))
+        #     fm_loss += calculate_2d_loss(
+        #         p, p_hat[i], loss_fn=self.mae_loss
+        #     )
+        # fm_loss /= (i + 1)
+        adv_loss += self.config["lambda_feat_match"] # * fm_loss
 
         per_example_losses = adv_loss
 
         dict_metrics_losses = {
             "adversarial_loss": adv_loss,
-            "fm_loss": fm_loss,
+            # "fm_loss": fm_loss,
             "gen_loss": adv_loss
         }
 
