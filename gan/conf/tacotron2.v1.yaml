@@ -74,13 +74,15 @@ gradient_accumulation_steps: 1
 #                    INTERVAL SETTING                     #
 ###########################################################
 train_max_steps: 200000                 # Number of training steps.
-save_interval_steps: 2000               # Interval steps to save checkpoint.
-eval_interval_steps: 500                # Interval steps to evaluate the network.
-log_interval_steps: 200                 # Interval steps to record the training log.
+save_interval_steps: 500               # Interval steps to save checkpoint.
+eval_interval_steps: 250                # Interval steps to evaluate the network.
+log_interval_steps: 50                # Interval steps to record the training log.
 start_schedule_teacher_forcing: 200001  # don't need to apply schedule teacher forcing.
 start_ratio_value: 0.5                  # start ratio of scheduled teacher forcing.
 schedule_decay_steps: 50000             # decay step scheduled teacher forcing.
 end_ratio_value: 0.0                    # end ratio of scheduled teacher forcing.
+discriminator_train_start_steps: 0     # step to start training discriminator.
+
 ###########################################################
 #                     OTHER SETTING                       #
 ###########################################################
