@@ -289,7 +289,7 @@ class GanBasedTrainer(BasedTrainer):
             self._already_apply_input_signature = True
 
         # run one_step_forward
-        self._one_step_forward(batch)
+        self.one_step_forward(batch)
 
         # update counts
         self.steps += 1
