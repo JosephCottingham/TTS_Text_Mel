@@ -132,7 +132,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         p = self._discriminator(mel_gts)
 
         adv_loss = 0.0
-        print(tf.squeeze(p_hat[0]).get_shape())
+        # print(tf.squeeze(p_hat[0]).get_shape())
         # Aderstandal loss
         for i in range(len(p_hat)):
             d = tf.squeeze(p_hat[i])
@@ -143,8 +143,8 @@ class Tacotron2Trainer(GanBasedTrainer):
 
         # Feature Matching Loss
         fm_loss = 0.0
-        print(tf.squeeze(p[0]).get_shape())
-        print(tf.squeeze(p_hat[0]).get_shape())
+        # print(tf.squeeze(p[0]).get_shape())
+        # print(tf.squeeze(p_hat[0]).get_shape())
 
         for i in range(len(p_hat)):
             fm_loss += calculate_2d_loss(
@@ -180,7 +180,6 @@ class Tacotron2Trainer(GanBasedTrainer):
         mel_outputs.set_shape([32, 870, 80, 1])
 
         mel_gts = tf.expand_dims(mel_gts, 3)
-        print('aaaaaaaaaaaaaa')
 
         p_hat = self._discriminator(mel_outputs)
 
@@ -191,7 +190,7 @@ class Tacotron2Trainer(GanBasedTrainer):
 
         for i in range(len(p)):
             d = tf.squeeze(p[i])
-            real_loss += calculate_3d_loss(
+            real_loss += calculate_2d_loss(
                 tf.ones_like(d), d, loss_fn=self.mse_loss
             )
             d = tf.squeeze(p_hat[i])
