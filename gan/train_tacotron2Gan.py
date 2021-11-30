@@ -495,38 +495,6 @@ def main():
         tacotron2._build()
         tacotron2.summary()
 
-    #     if len(args.pretrained) > 1:
-    #         tacotron2.load_weights(args.pretrained, by_name=True, skip_mismatch=True)
-    #         logging.info(
-    #             f"Successfully loaded pretrained weight from {args.pretrained}."
-    #         )
-
-    #     # AdamW for tacotron2
-    #     learning_rate_fn = tf.keras.optimizers.schedules.PolynomialDecay(
-    #         initial_learning_rate=config["optimizer_params"]["initial_learning_rate"],
-    #         decay_steps=config["optimizer_params"]["decay_steps"],
-    #         end_learning_rate=config["optimizer_params"]["end_learning_rate"],
-    #     )
-
-    #     learning_rate_fn = WarmUp(
-    #         initial_learning_rate=config["optimizer_params"]["initial_learning_rate"],
-    #         decay_schedule_fn=learning_rate_fn,
-    #         warmup_steps=int(
-    #             config["train_max_steps"]*config["optimizer_params"]["warmup_proportion"]
-    #         ),
-    #     )
-
-    #     optimizer = AdamWeightDecay(
-    #         learning_rate=learning_rate_fn,
-    #         weight_decay_rate=config["optimizer_params"]["weight_decay"],
-    #         beta_1=0.9,
-    #         beta_2=0.98,
-    #         epsilon=1e-6,
-    #         exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"],
-    #     )
-
-    #     _ = optimizer.iterations
-
         gen_optimizer = tf.keras.optimizers.Adam(**config["generator_optimizer_params"])
         dis_optimizer = tf.keras.optimizers.Adam( **config["discriminator_optimizer_params"])
 
@@ -534,7 +502,12 @@ def main():
         discriminator.summary()
 
     # compile trainer
-    trainer.compile(gen_model=tacotron2, dis_model=discriminator, gen_optimizer=gen_optimizer, dis_optimizer=dis_optimizer)
+    trainer.compile(
+        gen_model=tacotron2,
+        dis_model=discriminator,
+        gen_optimizer=gen_optimizer,
+        dis_optimizer=dis_optimizer
+    )
 
     # start training
     try:
