@@ -140,7 +140,7 @@ class Tacotron2Trainer(GanBasedTrainer):
             print(p[i])
             print(tf.shape(p[i]))
             fm_loss += calculate_2d_loss(
-                p[i], p_hat[i], loss_fn=self.mae_loss
+                p, p_hat[i], loss_fn=self.mae_loss
             )
         fm_loss /= (i + 1)
         adv_loss += self.config["lambda_feat_match"] * fm_loss
