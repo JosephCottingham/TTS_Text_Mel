@@ -145,9 +145,9 @@ class Tacotron2Trainer(GanBasedTrainer):
         fm_loss = 0.0
         for i in range(len(p_hat)):
             for j in range(len(p_hat[0])):
-            fm_loss += calculate_3d_loss(
-                p[i][j], p_hat[i], loss_fn=self.mae_loss
-            )
+                fm_loss += calculate_3d_loss(
+                    p[i][j], p_hat[i][j], loss_fn=self.mae_loss
+                )
         fm_loss /= (i + 1)
         adv_loss += self.config["lambda_feat_match"] # * fm_loss
 
