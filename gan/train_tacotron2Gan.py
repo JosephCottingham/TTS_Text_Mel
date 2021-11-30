@@ -125,12 +125,12 @@ class Tacotron2Trainer(GanBasedTrainer):
         mel_outputs.set_shape([32, 870, 80])
         mel_outputs = tf.expand_dims(mel_outputs, 3)
         mel_outputs.set_shape([32, 870, 80, 1])
-        print(mel_outputs.get_shape())
         mel_outputs = tf.expand_dims(mel_outputs, 0)
         print(mel_outputs.get_shape())
 
         print('mel_gts')
         mel_gts = tf.expand_dims(mel_gts, 3)
+        mel_gts = tf.expand_dims(mel_gts, 0)
         print(mel_gts.get_shape())
 
         p_hat = self._discriminator(mel_outputs)
@@ -142,7 +142,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         # Aderstandal loss
         for i in range(len(p_hat)):
             d = tf.squeeze(p_hat[i])
-            adv_loss += calculate_2d_loss(
+            adv_loss += calculate_3d_loss(
                 tf.ones_like(d), d, loss_fn=self.mse_loss
             )
         adv_loss /= i + 1
