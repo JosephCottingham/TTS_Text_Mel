@@ -130,27 +130,23 @@ class Tacotron2Trainer(GanBasedTrainer):
         p_hat = self._discriminator(mel_outputs)
 
         p = self._discriminator(mel_gts)
-        
+
         adv_loss = 0.0
 
-
+        # Aderstandal loss
         for i in range(len(p_hat)):
-            adv_loss += calculate_2d_loss(
+            adv_loss += calculate_3d_loss(
                 tf.ones_like(p_hat[i]), p_hat[i], loss_fn=self.mse_loss
             )
         adv_loss /= i + 1
 
-        # define feature-matching loss
-        # fm_loss = 0.0
-        # print(p)
-        # for i in range(len(p_hat)):
-        #     print(p_hat[i])
-        #     print(p[i])
-        #     print(tf.shape(p[i]))
-        #     fm_loss += calculate_2d_loss(
-        #         p, p_hat[i], loss_fn=self.mae_loss
-        #     )
-        # fm_loss /= (i + 1)
+        # Feature Matching Loss
+        fm_loss = 0.0
+        for i in range(len(p_hat)):
+            fm_loss += calculate_3d_loss(
+                p[i], p_hat[i], loss_fn=self.mae_loss
+            )
+        fm_loss /= (i + 1)
         adv_loss += self.config["lambda_feat_match"] # * fm_loss
 
         per_example_losses = adv_loss
