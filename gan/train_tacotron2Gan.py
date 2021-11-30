@@ -145,7 +145,7 @@ class Tacotron2Trainer(GanBasedTrainer):
 
         # Feature Matching Loss
         fm_loss = 0.0
-
+        print(len(p_hat))
         for i in range(len(p_hat)):
             fm_loss += calculate_3d_loss(
                 p[i], p_hat[i], loss_fn=self.mae_loss
