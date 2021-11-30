@@ -23,7 +23,7 @@ from tqdm import tqdm
 
 from tensorflow_tts.optimizers import GradientAccumulator
 from tensorflow_tts.utils import utils
-
+import numpy as np
 
 class BasedTrainer(metaclass=abc.ABCMeta):
     """Customized trainer module for all models."""
