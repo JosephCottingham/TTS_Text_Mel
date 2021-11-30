@@ -159,8 +159,7 @@ class Tacotron2Trainer(GanBasedTrainer):
         mel_gts = batch["mel_gts"]
         y_hat = gen_outputs[1]
 
-        y = tf.expand_dims(mel_gts, 2)
-        p = self._discriminator(y)
+        p = self._discriminator(mel_gts)
         p_hat = self._discriminator(y_hat)
 
         real_loss = 0.0
