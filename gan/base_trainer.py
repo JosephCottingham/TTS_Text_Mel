@@ -278,7 +278,7 @@ class GanBasedTrainer(BasedTrainer):
             train_element_signature = self._get_train_element_signature()
             eval_element_signature = self._get_eval_element_signature()
             self.one_step_forward = tf.function(
-                self._one_step_forward, input_signature=[train_element_signature]
+                self._one_step_forward, experimental_relax_shapes=True
             )
             self.one_step_evaluate = tf.function(
                 self._one_step_evaluate, input_signature=[eval_element_signature]

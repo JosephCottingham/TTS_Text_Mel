@@ -24,8 +24,8 @@ from tensorflow_tts.configs.tacotron2 import Tacotron2Config
 import tensorflow_tts.configs.melgan as MELGAN_CONFIG
 from tensorflow_tts.models import TFTacotron2, TFMelGANMultiScaleDiscriminator
 from tensorflow_tts.optimizers import AdamWeightDecay, WarmUp
-# from base_trainer import GanBasedTrainer
-from tensorflow_tts.trainers import GanBasedTrainer
+from base_trainer import GanBasedTrainer
+# from tensorflow_tts.trainers import GanBasedTrainer
 
 from tensorflow_tts.utils import calculate_2d_loss, calculate_3d_loss, return_strategy
 from Discriminator import make_discriminator_model
