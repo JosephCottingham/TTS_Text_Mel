@@ -303,7 +303,7 @@ class GanBasedTrainer(BasedTrainer):
         #     args=(batch,)
         # )
         return self._strategy.reduce(
-            tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
+            tf.distribute.ReduceOp.SUM, 1, axis=None
         )
 
     @abc.abstractmethod
