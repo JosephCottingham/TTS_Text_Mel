@@ -291,10 +291,13 @@ class GanBasedTrainer(BasedTrainer):
         # run one_step_forward
         self.one_step_forward(batch,)
 
+        print('one_step_forward complete')
         # update counts
         self.steps += 1
         self.tqdm.update(1)
         self._check_train_finish()
+        print('_check_train_finish')
+
 
     def _one_step_forward(self, batch):
 
