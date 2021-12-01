@@ -24,8 +24,8 @@ from tensorflow_tts.configs.tacotron2 import Tacotron2Config
 import tensorflow_tts.configs.melgan as MELGAN_CONFIG
 from tensorflow_tts.models import TFTacotron2, TFMelGANMultiScaleDiscriminator
 from tensorflow_tts.optimizers import AdamWeightDecay, WarmUp
-from base_trainer import GanBasedTrainer
-# from tensorflow_tts.trainers import GanBasedTrainer
+# from base_trainer import GanBasedTrainer
+from tensorflow_tts.trainers import GanBasedTrainer
 
 from tensorflow_tts.utils import calculate_2d_loss, calculate_3d_loss, return_strategy
 from Discriminator import make_discriminator_model
@@ -124,9 +124,9 @@ class Tacotron2Trainer(GanBasedTrainer):
         # [[32, None, 80], [32, None, 80], [32, None], [32, 188, None]]
         print('mel_outputs')
 
-        mel_outputs.set_shape([4, 870, 80])
+        mel_outputs.set_shape([32, 870, 80])
         mel_outputs = tf.expand_dims(mel_outputs, 3)
-        mel_outputs.set_shape([4, 870, 80, 1])
+        mel_outputs.set_shape([32, 870, 80, 1])
         mel_outputs = tf.expand_dims(mel_outputs, 0)
         print(mel_outputs.get_shape())
 
@@ -185,9 +185,9 @@ class Tacotron2Trainer(GanBasedTrainer):
 
         print('mel_outputs')
 
-        mel_outputs.set_shape([4, 870, 80])
+        mel_outputs.set_shape([32, 870, 80])
         mel_outputs = tf.expand_dims(mel_outputs, 3)
-        mel_outputs.set_shape([4, 870, 80, 1])
+        mel_outputs.set_shape([32, 870, 80, 1])
         mel_outputs = tf.expand_dims(mel_outputs, 0)
         print(mel_outputs.get_shape())
 
