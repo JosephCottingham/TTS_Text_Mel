@@ -183,8 +183,6 @@ class BasedTrainer(metaclass=abc.ABCMeta):
                 tf.summary.scalar(stage + "/" + key, value.result(), step=self.steps)
                 self.writer.flush()
 
-def merge_fn(strategy, keys):
-    print(keys)
 
 class GanBasedTrainer(BasedTrainer):
     """Customized trainer module for GAN TTS training (MelGAN, GAN-TTS, ParallelWaveGAN)."""
@@ -291,8 +289,7 @@ class GanBasedTrainer(BasedTrainer):
             self._already_apply_input_signature = True
 
         # run one_step_forward
-        tf.distribute.get_replica_context().merge_call(merge_fn)
-        self._strategy.run(self.one_step_forward, args=(batch,))
+        # self._strategy.run(self.one_step_forward, args=(batch,))
 
         # update counts
         self.steps += 1
