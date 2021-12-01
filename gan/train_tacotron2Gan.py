@@ -124,9 +124,9 @@ class Tacotron2Trainer(GanBasedTrainer):
         # [[32, None, 80], [32, None, 80], [32, None], [32, 188, None]]
         print('mel_outputs')
 
-        mel_outputs.set_shape([32, 870, 80])
+        mel_outputs.set_shape([4, 870, 80])
         mel_outputs = tf.expand_dims(mel_outputs, 3)
-        mel_outputs.set_shape([32, 870, 80, 1])
+        mel_outputs.set_shape([4, 870, 80, 1])
         mel_outputs = tf.expand_dims(mel_outputs, 0)
         print(mel_outputs.get_shape())
 
@@ -185,9 +185,9 @@ class Tacotron2Trainer(GanBasedTrainer):
 
         print('mel_outputs')
 
-        mel_outputs.set_shape([32, 870, 80])
+        mel_outputs.set_shape([4, 870, 80])
         mel_outputs = tf.expand_dims(mel_outputs, 3)
-        mel_outputs.set_shape([32, 870, 80, 1])
+        mel_outputs.set_shape([4, 870, 80, 1])
         mel_outputs = tf.expand_dims(mel_outputs, 0)
         print(mel_outputs.get_shape())
 
