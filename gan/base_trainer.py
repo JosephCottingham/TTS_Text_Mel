@@ -289,6 +289,7 @@ class GanBasedTrainer(BasedTrainer):
             self._already_apply_input_signature = True
 
         # run one_step_forward
+        tf.distribute.get_replica_context().merge_call()
         self._strategy.run(self.one_step_forward, args=(batch,))
 
         # update counts
