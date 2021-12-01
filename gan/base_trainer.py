@@ -429,6 +429,7 @@ class GanBasedTrainer(BasedTrainer):
         per_replica_gen_losses = 0.0
         per_replica_dis_losses = 0.0
         print('Replicas: ', self._strategy.num_replicas_in_sync)
+        print('gradient_accumulation_steps: ', self.config["gradient_accumulation_steps"])
         if self.config["gradient_accumulation_steps"] == 1:
             (
                 gradients,
