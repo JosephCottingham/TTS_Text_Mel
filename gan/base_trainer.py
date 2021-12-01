@@ -302,6 +302,7 @@ class GanBasedTrainer(BasedTrainer):
             self._one_step_forward_per_replica,
             args=(batch,)
         )
+        print('_one_step_forward_per_replica complete')
         return self._strategy.reduce(
             tf.distribute.ReduceOp.SUM, 1, axis=None
         )
@@ -504,7 +505,8 @@ class GanBasedTrainer(BasedTrainer):
                     zip(gradients, self._discriminator.trainable_variables)
                 )
                 self._discriminator_gradient_accumulator.reset()
-
+        print(per_replica_gen_losses)
+        print(per_replica_dis_losses)
         return per_replica_gen_losses + per_replica_dis_losses
 
     def _eval_epoch(self):
