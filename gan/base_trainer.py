@@ -299,10 +299,10 @@ class GanBasedTrainer(BasedTrainer):
     def _one_step_forward(self, batch):
         print('Batch')
         print(type(batch))
-
+        b = copy.deepcopy(batch)
         per_replica_losses=self._strategy.run(
             self._one_step_forward_per_replica,
-            args=(batch,)
+            args=(b,)
         )
         return self._strategy.reduce(
             tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
@@ -473,11 +473,6 @@ class GanBasedTrainer(BasedTrainer):
                     gradients,
                     per_replica_dis_losses,
                 ) = self._calculate_discriminator_gradient_per_batch(batch)
-                print('gradients')
-                print(np.array(gradients).shape)
-                print(np.array(self._discriminator.trainable_variables).shape)
-                print(np.array(zip(gradients, self._discriminator.trainable_variables)).shape)
-                print(zip(gradients, self._discriminator.trainable_variables))
                 for g in gradients:
                     print(g)
 
