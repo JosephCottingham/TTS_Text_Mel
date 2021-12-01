@@ -477,7 +477,7 @@ class GanBasedTrainer(BasedTrainer):
                 self._dis_optimizer.apply_gradients(
                     zip(gradients, self._discriminator.trainable_variables)
                 )
-                prin('Done')
+                print('Done')
             else:
                 # gradient acummulation here.
                 for i in tf.range(self.config["gradient_accumulation_steps"]):
