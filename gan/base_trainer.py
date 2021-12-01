@@ -304,7 +304,7 @@ class GanBasedTrainer(BasedTrainer):
         )
         print('_one_step_forward_per_replica complete')
         return self._strategy.reduce(
-            tf.distribute.ReduceOp.SUM, 1, axis=None
+            tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
         )
 
     @abc.abstractmethod
