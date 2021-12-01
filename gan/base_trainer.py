@@ -306,9 +306,11 @@ class GanBasedTrainer(BasedTrainer):
             args=(batch,)
         )
         print('_one_step_forward_per_replica complete')
-        return self._strategy.reduce(
+        x = self._strategy.reduce(
             tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
         )
+        print('reduce complete')
+        return x
 
     @abc.abstractmethod
     def compute_per_example_generator_losses(self, batch, outputs):
