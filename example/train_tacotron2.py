@@ -32,7 +32,7 @@ import yaml
 from tqdm import tqdm
 
 import tensorflow_tts
-from examples.tacotron2.tacotron_dataset import CharactorMelDataset
+from tacotron_dataset import CharactorMelDataset
 from tensorflow_tts.configs.tacotron2 import Tacotron2Config
 from tensorflow_tts.models import TFTacotron2
 from tensorflow_tts.optimizers import AdamWeightDecay, WarmUp
@@ -158,7 +158,9 @@ class Tacotron2Trainer(Seq2SeqBasedTrainer):
             stop_token_predictions,
             alignment_historys,
         ) = outputs
-                
+        print(post_mel_outputs.get_shape())
+        print(batch["mel_gts"].get_shape())
+
         mel_loss_before = calculate_3d_loss(
             batch["mel_gts"], decoder_output, loss_fn=self.mae
         )

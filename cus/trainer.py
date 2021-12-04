@@ -40,23 +40,22 @@ class Trainer():
 
         # print('_train_step')
         # Key batch data 'input_lengths', 'speaker_ids', 'mel_gts', 'mel_lengths'
+        # (
+        #     decoder_output,
+        #     mel_outputs,
+        #     stop_token_predictions,
+        #     alignment_historys,
+        # ) = self._generator.inference(
+        #     tf.convert_to_tensor(batch['input_ids'], dtype=tf.int32),
+        #     tf.convert_to_tensor(batch['input_lengths'], tf.int32),
+        #     tf.convert_to_tensor(batch['speaker_ids'], dtype=tf.int32)
+        # )
         (
             decoder_output,
             mel_outputs,
             stop_token_predictions,
             alignment_historys,
-        ) = self._generator.inference(
-            tf.convert_to_tensor(batch['input_ids'], dtype=tf.int32),
-            tf.convert_to_tensor(batch['input_lengths'], tf.int32),
-            tf.convert_to_tensor(batch['speaker_ids'], dtype=tf.int32)
-        )        # outputs from generator
-
-        mel_loss_before = calculate_3d_loss(
-            batch["mel_gts"], decoder_output, loss_fn=self.mae_loss
-        )
-        mel_loss_after = calculate_3d_loss(
-            batch["mel_gts"], mel_outputs, loss_fn=self.mae_loss
-        )
+        ) = self._generator(**batch, training=False)
 
 
         # Padd or Slice generator output so that the discrimator can accept the shape
@@ -71,41 +70,100 @@ class Trainer():
 
         batch_real_loss = 0.0
         batch_fake_loss = 0.0
-        # Gather predictions
+
+        fm_loss, adv_loss = self.train_generator(mel_outputs, batch, batch['mel_gts'])
+
+        real_loss = self.train_discriminator(batch['mel_gts'], True)
+        fake_loss = self.train_discriminator(mel_outputs, False)
+
+
+    def train_generator(self, mel_outputs, batch, real_data):
+        batch_fm_loss = 0.0
+        batch_adv_loss = 0.0
+
         for step in range(32):
             with tf.GradientTape() as gtape:
-            
-                p_hat = self._discriminator(mel_outputs[step])
-                p = self._discriminator(batch['mel_gts'][step])
+                mel_output = mel_outputs[step]
+                gtape.watch(mel_outputs)
 
-                real_loss = self.mse_loss(tf.zeros_like(p), p)
-                fake_loss = self.mse_loss(tf.ones_like(p), p_hat)
+                print(f'train_generator {step}')
+                p_dis_gen = self._discriminator(mel_outputs)
+                p_dis_real = self._discriminator(real_data)
+
+                fm_loss = self.mae_loss(real_data, mel_outputs)
+                adv_loss = self.mse_loss(tf.ones_like(p_dis_gen), p_dis_gen)
+                print(adv_loss.get_shape())
+                adv_loss += self.config["lambda_feat_match"]* fm_loss
                 
-                batch_fake_loss += tf.math.reduce_mean(real_loss).numpy()
-                batch_real_loss += tf.math.reduce_mean(real_loss).numpy()
+                # batch_fm_loss += tf.math.reduce_mean(fm_loss).numpy()
+                # batch_adv_loss += tf.math.reduce_mean(adv_loss).numpy()
+
+                # print(self._generator.trainable_variables)
+                gtape.watch(self._generator.trainable_weights)
+                gtape.watch(adv_loss)
+                gtape.watch(fm_loss)
+                gtape.watch(p_dis_real)
+                gtape.watch(p_dis_gen)
+
+                # adv_loss += self.config["lambda_feat_match"] * fm_loss
+                # print(self._generator.trainable_variables)
+                # print(adv_loss)
+                gradients = gtape.gradient(
+                    fm_loss, self._generator.trainable_weights
+                )
+                # for index in range(len(self._generator.trainable_weights)):
+                #     print('-------')
+                #     print(adv_loss[index])
+                #     print(self._generator.trainable_weights[index])
+                print('----sizes----')
+                print(adv_loss.get_shape())
+                print(len(self._generator.trainable_weights))
+                print('-------')
+                print(gradients)
+                # print('-------')
+                # print(self._generator.trainable_weights)
+                # print('-------')
+                # print(adv_loss)
+                # print('-------')
+                self._gen_optimizer.apply_gradients(
+                    zip(gradients, self._generator.trainable_variables)
+                )
+
+        batch_fm_loss /= (step+1)
+        batch_adv_loss /= (step+1)
+        return batch_fm_loss, batch_adv_loss
+
+    def train_discriminator(self, x, real):
+        batch_loss = 0.0
+        for step in range(32):
+            print(f'train_discriminator {step}')
+            with tf.GradientTape() as gtape:
+
+                predictions = self._discriminator(x)
+
+                expected_predictions = tf.zeros_like(predictions) if real else tf.ones_like(predictions)
+                loss = self.mse_loss(expected_predictions, predictions)
+                print(expected_predictions.get_shape)
+                print(predictions.get_shape)
+                batch_loss += tf.math.reduce_mean(loss).numpy()
 
                 gtape.watch(self._discriminator.trainable_variables)
-                gtape.watch(fake_loss)
+                gtape.watch(loss)
+                
+                # print('+++++++')
+                # print(loss.get_shape())
+                # print(len(self._discriminator.trainable_variables))
 
                 gradients = gtape.gradient(
-                    fake_loss, self._discriminator.trainable_variables
+                    loss, self._discriminator.trainable_variables
                 )
-
+                # print(loss.get_shape())
+                # print(len(self._discriminator.trainable_weights))
                 self._dis_optimizer.apply_gradients(
                     zip(gradients, self._discriminator.trainable_variables)
                 )
-
-                gradients = gtape.gradient(
-                    real_loss, self._discriminator.trainable_variables
-                )
-
-                self._dis_optimizer.apply_gradients(
-                    zip(gradients, self._discriminator.trainable_variables)
-                )
-
-        batch_real_loss /= (step + 1)
-        batch_fake_loss /= (step + 1)
-
+        batch_loss /= (step+1)
+        return batch_loss
 
         # adv_loss = 0.0
         # fm_loss = 0.0
@@ -119,23 +177,11 @@ class Trainer():
         # fm_loss /= (i + 1)
         # adv_loss /= i + 1
 
-        # real_loss = []
-        # fake_loss = []
-        # for i in range(len(p)):
-        #     real_loss.append(calculate_3d_loss(
-        #         tf.ones_like(p[i]), p[i], loss_fn=self.mse_loss
-        #     ))
-        #     fake_loss.append(calculate_3d_loss(
-        #         tf.zeros_like(p_hat[i]), p_hat[i], loss_fn=self.mse_loss
-        #     ))
-        # # real_loss /= i + 1
-        # # fake_loss /= i + 1
-        # # dis_loss = real_loss + fake_loss
-        # print(f'{ self.steps }', end=' - ')
+
 
         self.dict_metrics_losses = {
-            "real_loss": batch_real_loss,
-            "fake_loss": batch_fake_loss,
+            "real_loss": real_loss,
+            "fake_loss": fake_loss,
             # "adversarial_loss": adv_loss,
             # "fm_loss": fm_loss,
             # "gen_loss": adv_loss
