@@ -12,7 +12,8 @@ from tensorflow_tts.inference import TFAutoModel
 from tensorflow_tts.configs.tacotron2 import Tacotron2Config
 from tensorflow_tts.models import TFTacotron2, TFMelGANMultiScaleDiscriminator
 
-from Discriminator import make_discriminator_model
+from discriminator import make_discriminator_model
+from generator import Generator
 
 from trainer import Trainer
 from tacotron_dataset import CharactorMelDataset
@@ -196,7 +197,8 @@ with STRATEGY.scope():
     # tacotron2._build()
     # tacotron2.summary()
     tacotron2 = TFAutoModel.from_pretrained("tensorspeech/tts-tacotron2-ljspeech-en", name="tacotron2")
-    tacotron2.summary()
+    generator = Generator(config=config, base_model=tacotron2)
+
 
     gen_optimizer = tf.keras.optimizers.Adam(**config["generator_optimizer_params"])
     dis_optimizer = tf.keras.optimizers.Adam( **config["discriminator_optimizer_params"])
@@ -215,7 +217,7 @@ trainer = Trainer(
 
 # compile trainer
 trainer.compile(
-    gen_model=tacotron2,
+    gen_model=generator,
     dis_model=discriminator,
     gen_optimizer=gen_optimizer,
     dis_optimizer=dis_optimizer

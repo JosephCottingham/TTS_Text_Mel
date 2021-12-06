@@ -94,7 +94,7 @@ class Trainer():
         print(f'Epoch: {self.epochs}')
         print(f'Steps: {self.steps}')
         print(f'Batches: {self.batches}')
-        print(f'UTT_ID: ' + str(batch['utt_ids'][0].name))
+        print(f'UTT_ID: ' + str(batch['utt_ids'][0]))
 
 
         (
@@ -115,7 +115,7 @@ class Trainer():
 
 
 
-        # print(batch.keys())
+        print(batch.keys())
         # print(batch['input_ids'][0])
         # print(batch['input_lengths'][0])
         # print(batch['speaker_ids'][0])
@@ -125,9 +125,22 @@ class Trainer():
         mel_outputs = self.padd_slice_mel_output(mel_outputs)
 
         dict_metrics_losses = {}
+        adv_loss = 0
+        fm_loss = 0
+        for index in range(len(batch)):
+            adv_loss_temp, fm_loss_temp = self.train_generator(
+                {
+                    'input_ids':tf.expand_dims(batch['input_ids'][index], 0),
+                    'input_lengths':tf.expand_dims(batch['input_lengths'][index], 0),
+                    'speaker_ids':tf.expand_dims(batch['speaker_ids'][index], 0)
+                },
+                batch['mel_gts'][index]
+            )
+            adv_loss += adv_loss_temp
+            fm_loss += fm_loss_temp
+        adv_loss /= (index + 1)
+        fm_loss /= (index + 1)
 
-        adv_loss, fm_loss = self.train_generator(batch, batch['mel_gts'])
-        
         dict_metrics_losses['adv_loss'] = adv_loss
         dict_metrics_losses['fm_loss'] = fm_loss
         dict_metrics_losses['gen_loss'] = adv_loss
@@ -146,9 +159,6 @@ class Trainer():
     def train_generator(self, batch, real_data):
         # print(f'train_generator {self.steps}')
 
-        batch_fm_loss = 0.0
-        batch_adv_loss = 0.0
-
         with tf.GradientTape() as gtape:
             
             (
@@ -158,7 +168,7 @@ class Trainer():
                 alignment_historys,
             ) = self._generator(
                 **batch,
-                training=False
+                train=False
             )
                 
             # print(mel_outputs[0])
@@ -179,9 +189,6 @@ class Trainer():
 
             adv_loss += self.config["lambda_feat_match"]* fm_loss
             
-            value_not_nan = tf.dtypes.cast(tf.math.logical_not(tf.math.is_nan(adv_loss)), dtype=tf.float32)
-            adv_loss = tf.math.multiply_no_nan(adv_loss, value_not_nan)
-
             # batch_fm_loss += tf.math.reduce_mean(fm_loss).numpy()
             # batch_adv_loss += tf.math.reduce_mean(adv_loss).numpy()
 
@@ -193,17 +200,12 @@ class Trainer():
             # print(self._generator.trainable_variables)
             # print(adv_loss)
             # print(fm_loss)
-            grad_layers = self._generator.trainable_weights[-2:]
-            grad_adv_loss = adv_loss[-2:]
             gradients = gtape.gradient(
-                grad_adv_loss, grad_layers
+                adv_loss, self._generator.trainable_weights
             )
 
-            # for v in self._generator.trainable_weights:
-            #     print(v.name)
-
             self._gen_optimizer.apply_gradients(
-                zip(gradients, grad_layers)
+                zip(gradients, self._generator.trainable_variables)
             )
 
 
@@ -245,6 +247,7 @@ class Trainer():
     def _train_epoch(self):
         dict_metrics_losses = None
         for train_steps_per_epoch, batch in enumerate(self.train_data_loader, 1):
+            # self.generate_and_save_intermediate_result(batch)
             dict_metrics_losses = self.STRATEGY.run(self._train_step, args=(batch,))
 
             self._check_log_interval(batch)
