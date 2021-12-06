@@ -68,5 +68,17 @@ class Generator(tf.keras.Model):
         inputs['mel_lengths'] = np.array([50])
         self(
             inputs,
-            training=True,
+            training=False,
+        )
+
+    def inference(self, input_ids, input_lengths, speaker_ids):
+        inputs = {}
+        inputs['input_ids'] = input_ids
+        inputs['input_lengths'] = input_lengths
+        inputs['speaker_ids'] = speaker_ids
+        inputs['mel_gts'] = np.random.normal(size=(1, 50, 80)).astype(np.float32)
+        inputs['mel_lengths'] = np.array([50])
+        return self(
+            inputs,
+            training=False,
         )

@@ -40,6 +40,7 @@ class Trainer():
         self.save_paths['checkpoints'] = os.path.join(self.save_paths['base'], 'checkpoints')
         self.save_paths['predictions'] = os.path.join(self.save_paths['base'], 'predictions')
         self.save_paths['dataset_representations'] = os.path.join(self.save_paths['base'], 'dataset_representations')
+        self.save_paths['tensorboard'] = os.path.join(self.save_paths['base'], 'tensorboard')
         for path_key in self.save_paths.keys():
             os.makedirs(self.save_paths[path_key], exist_ok=True)
 
@@ -48,7 +49,7 @@ class Trainer():
         self.epochs = epochs
         self.batches = batches
 
-        self.writer = tf.summary.create_file_writer(self.save_paths['base'])
+        self.writer = tf.summary.create_file_writer(self.save_paths['tensorboard'])
         
         self.list_metrics_name = [
             "adv_loss",
@@ -481,7 +482,7 @@ class Trainer():
             input_ids = self.tacotron2_processor.text_to_sequence(sample)
 
             # Generate Mel Spectrograms
-            _, mel_outputs, stop_token_prediction, alignment_history = self._generator.inference_tflite(
+            _, mel_outputs, stop_token_prediction, alignment_history = self._generator.inference(
                 tf.expand_dims(tf.convert_to_tensor(input_ids, dtype=tf.int32), 0),
                 tf.convert_to_tensor([len(input_ids)], tf.int32),
                 tf.convert_to_tensor([0], dtype=tf.int32)
