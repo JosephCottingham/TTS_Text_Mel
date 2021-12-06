@@ -9,14 +9,12 @@ import numpy as np
 
 import tensorflow_tts
 from tensorflow_tts.inference import TFAutoModel
-from tensorflow_tts.configs.tacotron2 import Tacotron2Config
-from tensorflow_tts.models import TFTacotron2, TFMelGANMultiScaleDiscriminator
 
 from discriminator import make_discriminator_model
 from generator import Generator
 
 from trainer import Trainer
-from tacotron_dataset import CharactorMelDataset
+from dataset_manager import CharactorMelDataset
 
 
 
@@ -126,8 +124,8 @@ config.update(vars(args))
 config["version"] = tensorflow_tts.__version__
 
 # get dataset
-if config["remove_short_samples"]:
-    mel_length_threshold = config["mel_length_threshold"]
+if config['dataset_manager_params']["remove_short_samples"]:
+    mel_length_threshold = config['dataset_manager_params']["mel_length_threshold"]
 else:
     mel_length_threshold = 0
 
@@ -141,15 +139,13 @@ else:
     raise ValueError("Only npy are supported.")
 
 train_dataset = CharactorMelDataset(
-    dataset=config["tacotron2_params"]["dataset"],
+    config=config['dataset_manager_params'],
     root_dir=args.train_dir,
     charactor_query=charactor_query,
     mel_query=mel_query,
     charactor_load_fn=charactor_load_fn,
     mel_load_fn=mel_load_fn,
     mel_length_threshold=mel_length_threshold,
-    reduction_factor=config["tacotron2_params"]["reduction_factor"],
-    use_fixed_shapes=config["use_fixed_shapes"],
     align_query=align_query,
 )
 
@@ -162,52 +158,46 @@ with open(os.path.join(args.outdir, "config.yml"), "w") as f:
 for key, value in config.items():
     logging.info(f"{key} = {value}")
 
-train_dataset = train_dataset.create(
-    is_shuffle=config["is_shuffle"],
-    allow_cache=config["allow_cache"],
-    batch_size=config["batch_size"]
-)
 
-charactorMelDataset = CharactorMelDataset(
-    dataset=config["tacotron2_params"]["dataset"],
+
+valid_dataset = CharactorMelDataset(
+    config=config['dataset_manager_params'],
     root_dir=args.dev_dir,
     charactor_query=charactor_query,
     mel_query=mel_query,
     charactor_load_fn=charactor_load_fn,
     mel_load_fn=mel_load_fn,
     mel_length_threshold=mel_length_threshold,
-    reduction_factor=config["tacotron2_params"]["reduction_factor"],
     use_fixed_shapes=False,  # don't need apply fixed shape for evaluation.
     align_query=align_query,
 )
 
-charactorMelDataset.data_graphics()
 
-valid_dataset = charactorMelDataset.create(
-    is_shuffle=config["is_shuffle"],
-    allow_cache=config["allow_cache"],
-    batch_size=config["batch_size"]
-)
 
 STRATEGY = tf.distribute.OneDeviceStrategy(device="/gpu:0")
 
 with STRATEGY.scope():
-    tacotron_config = Tacotron2Config(**config["tacotron2_params"])
+    # tacotron_config = Tacotron2Config(**config["tacotron2_params"])
     # tacotron2 = TFTacotron2(config=tacotron_config, name="tacotron2")
     # tacotron2._build()
     # tacotron2.summary()
-    tacotron2 = TFAutoModel.from_pretrained("tensorspeech/tts-tacotron2-ljspeech-en", name="tacotron2")
-    generator = Generator(config=config, base_model=tacotron2)
-
-
+    
+    # Setup optimizer
     gen_optimizer = tf.keras.optimizers.Adam(**config["generator_optimizer_params"])
     dis_optimizer = tf.keras.optimizers.Adam( **config["discriminator_optimizer_params"])
 
+
+    # Setup Generator
+    tacotron2 = TFAutoModel.from_pretrained("tensorspeech/tts-tacotron2-ljspeech-en", name="tacotron2")
+    generator = Generator(config=config['generator_params'], base_model=tacotron2)
+    generator._build()
+    generator.summary()
+
+    # Setup Discrimator
     discriminator = make_discriminator_model()
-    # discriminator.compile(optimizer=dis_optimizer, loss="mse", metrics=["mae"])
     discriminator.summary()
 
-    # define trainer
+# define trainer
 trainer = Trainer(
     config=config,
     STRATEGY=STRATEGY,
@@ -229,7 +219,6 @@ try:
     trainer.fit(
         train_dataset,
         valid_dataset,
-        saved_path=os.path.join(config["outdir"], "checkpoints/"),
         resume_path=args.resume,
     )
 except KeyboardInterrupt:

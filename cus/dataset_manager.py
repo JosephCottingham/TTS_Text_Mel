@@ -36,7 +36,7 @@ class CharactorMelDataset(AbstractDataset):
 
     def __init__(
         self,
-        dataset,
+        config,
         root_dir,
         charactor_query="*-ids.npy",
         mel_query="*-norm-feats.npy",
@@ -45,11 +45,11 @@ class CharactorMelDataset(AbstractDataset):
         mel_load_fn=np.load,
         mel_length_threshold=0,
         reduction_factor=1,
+        use_fixed_shapes=None,
         mel_pad_value=0.0,
         char_pad_value=0,
         ga_pad_value=-1.0,
         g=0.2,
-        use_fixed_shapes=False,
     ):
         """Initialize dataset.
 
@@ -71,6 +71,8 @@ class CharactorMelDataset(AbstractDataset):
             max_mel_length (int): maximum mel length if use_fixed_shapes=True
 
         """
+        self.config = config
+
         # find all of charactor and mel files.
         charactor_files = sorted(find_files(root_dir, charactor_query))
         mel_files = sorted(find_files(root_dir, mel_query))
@@ -109,13 +111,13 @@ class CharactorMelDataset(AbstractDataset):
         self.charactor_load_fn = charactor_load_fn
         self.mel_lengths = mel_lengths
         self.char_lengths = char_lengths
-        self.reduction_factor = reduction_factor
+        self.reduction_factor = self.config['reduction_factor']
         self.mel_length_threshold = mel_length_threshold
         self.mel_pad_value = mel_pad_value
         self.char_pad_value = char_pad_value
         self.ga_pad_value = ga_pad_value
         self.g = g
-        self.use_fixed_shapes = use_fixed_shapes
+        self.use_fixed_shapes = self.config['use_fixed_shapes'] if use_fixed_shapes == None else use_fixed_shapes
         self.max_char_length = np.max(char_lengths)
 
         if np.max(mel_lengths) % self.reduction_factor == 0:
@@ -196,14 +198,16 @@ class CharactorMelDataset(AbstractDataset):
 
     def create(
         self,
-        allow_cache=False,
-        batch_size=1,
-        is_shuffle=False,
         map_fn=None,
         reshuffle_each_iteration=True,
         drop_remainder=True,
     ):
         """Create tf.dataset function."""
+
+        is_shuffle=self.config["is_shuffle"]
+        allow_cache=self.config["allow_cache"]
+        batch_size=self.config["batch_size"]
+
         output_types = self.get_output_dtypes()
         datasets = tf.data.Dataset.from_generator(
             self.generator, output_types=output_types, args=(self.get_args())
@@ -288,10 +292,10 @@ class CharactorMelDataset(AbstractDataset):
     def __name__(self):
         return "CharactorMelDataset"
 
-    def data_graphics(self):
+    def data_graphics(self, base_path):
         mel_lengths = pd.Series(self.mel_lengths, name="Mel Spectrogram Length")
         sns.histplot(data=mel_lengths, kde=True)
-        plt.savefig('data_graphs/mel_lengths_dist.png')
+        plt.savefig(os.path.join(base_path, 'mel_lengths_dist.png'))
 
         char_lengths = pd.DataFrame(
             {
@@ -300,4 +304,4 @@ class CharactorMelDataset(AbstractDataset):
         )
         sns.distplot(char_lengths['Character Length'], kde=True)
         plt.xlabel('Character Length', fontsize=16)
-        plt.savefig('data_graphs/char_lengths_dist.png')
+        plt.savefig(os.path.join(base_path, 'char_lengths_dist.png'))
