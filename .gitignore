@@ -141,3 +141,4 @@ cython_debug/
 */dump/
 */exp
 gan/LJSpeech-1.1.tar.bz2
+cus/dataset_csvs/

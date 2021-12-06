@@ -18,9 +18,14 @@ import itertools
 import logging
 import os
 import random
+import uuid
 
 import numpy as np
 import tensorflow as tf
+import plotly.express as px
+import seaborn as sns
+import pandas as pd
+import matplotlib.pyplot as plt
 
 from tensorflow_tts.datasets.abstract_dataset import AbstractDataset
 from tensorflow_tts.utils import find_files
@@ -282,3 +287,17 @@ class CharactorMelDataset(AbstractDataset):
 
     def __name__(self):
         return "CharactorMelDataset"
+
+    def data_graphics(self):
+        mel_lengths = pd.Series(self.mel_lengths, name="Mel Spectrogram Length")
+        sns.histplot(data=mel_lengths, kde=True)
+        plt.savefig('data_graphs/mel_lengths_dist.png')
+
+        char_lengths = pd.DataFrame(
+            {
+                'Character Length' : self.char_lengths
+            }
+        )
+        sns.distplot(char_lengths['Character Length'], kde=True)
+        plt.xlabel('Character Length', fontsize=16)
+        plt.savefig('data_graphs/char_lengths_dist.png')

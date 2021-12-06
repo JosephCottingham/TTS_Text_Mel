@@ -47,7 +47,7 @@ tacotron2_params:
 ###########################################################
 #                  DATA LOADER SETTING                    #
 ###########################################################
-batch_size: 32             # Batch size for each GPU with assuming that gradient_accumulation_steps == 1.
+batch_size: 1             # Batch size for each GPU with assuming that gradient_accumulation_steps == 1.
 remove_short_samples: true # Whether to remove samples the length of which are less than batch_max_steps.
 allow_cache: true          # Whether to allow cache in dataset. If true, it requires cpu memory.
 mel_length_threshold: 32   # remove all targets has mel_length <= 32 
@@ -59,12 +59,12 @@ use_fixed_shapes: true     # use_fixed_shapes for training (2x speed-up)
 #             OPTIMIZER & SCHEDULER SETTING               #
 ###########################################################
 generator_optimizer_params:
-    lr: 0.0001             # Generator's learning rate.
+    learning_rate: 0.0001             # Generator's learning rate.
     beta_1: 0.5
     beta_2: 0.9
     
 discriminator_optimizer_params:
-    lr: 0.0001            # Discriminator's learning rate.
+    learning_rate: 0.0001            # Discriminator's learning rate.
     beta_1: 0.5
     beta_2: 0.9
 

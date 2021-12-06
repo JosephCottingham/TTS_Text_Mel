@@ -86,6 +86,8 @@ class Tacotron2Trainer(GanBasedTrainer):
 
         self.config = config
 
+
+
     def compile(self, gen_model, dis_model, gen_optimizer, dis_optimizer):
         super().compile(gen_model, dis_model, gen_optimizer, dis_optimizer)
         self.binary_crossentropy = tf.keras.losses.BinaryCrossentropy(

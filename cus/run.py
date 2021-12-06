@@ -8,6 +8,7 @@ import tensorflow as tf
 import numpy as np
 
 import tensorflow_tts
+from tensorflow_tts.inference import TFAutoModel
 from tensorflow_tts.configs.tacotron2 import Tacotron2Config
 from tensorflow_tts.models import TFTacotron2, TFMelGANMultiScaleDiscriminator
 
@@ -166,7 +167,7 @@ train_dataset = train_dataset.create(
     batch_size=config["batch_size"]
 )
 
-valid_dataset = CharactorMelDataset(
+charactorMelDataset = CharactorMelDataset(
     dataset=config["tacotron2_params"]["dataset"],
     root_dir=args.dev_dir,
     charactor_query=charactor_query,
@@ -177,7 +178,11 @@ valid_dataset = CharactorMelDataset(
     reduction_factor=config["tacotron2_params"]["reduction_factor"],
     use_fixed_shapes=False,  # don't need apply fixed shape for evaluation.
     align_query=align_query,
-).create(
+)
+
+charactorMelDataset.data_graphics()
+
+valid_dataset = charactorMelDataset.create(
     is_shuffle=config["is_shuffle"],
     allow_cache=config["allow_cache"],
     batch_size=config["batch_size"]
@@ -187,8 +192,10 @@ STRATEGY = tf.distribute.OneDeviceStrategy(device="/gpu:0")
 
 with STRATEGY.scope():
     tacotron_config = Tacotron2Config(**config["tacotron2_params"])
-    tacotron2 = TFTacotron2(config=tacotron_config, name="tacotron2")
-    tacotron2._build()
+    # tacotron2 = TFTacotron2(config=tacotron_config, name="tacotron2")
+    # tacotron2._build()
+    # tacotron2.summary()
+    tacotron2 = TFAutoModel.from_pretrained("tensorspeech/tts-tacotron2-ljspeech-en", name="tacotron2")
     tacotron2.summary()
 
     gen_optimizer = tf.keras.optimizers.Adam(**config["generator_optimizer_params"])
@@ -215,12 +222,13 @@ trainer.compile(
 )
 
 # start training
+args.resume = None if len(args.resume) < 1 else args.resume
 try:
     trainer.fit(
         train_dataset,
         valid_dataset,
         saved_path=os.path.join(config["outdir"], "checkpoints/"),
-        resume=args.resume,
+        resume_path=args.resume,
     )
 except KeyboardInterrupt:
     trainer.save_checkpoint()
