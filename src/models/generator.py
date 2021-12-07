@@ -8,15 +8,30 @@ class Post_Matching(tf.keras.layers.Layer):
         super().__init__(**kwargs)
 
         self.config = config
-        self.dense = tf.keras.layers.Dense(
+        self.input = tf.keras.layers.Dense(
             self.config['n_mels'],
-            name='Dense_1'
+            name='Dense_Input'
         )
+        self.dense1 = tf.keras.layers.Dense(
+            3000,
+            name='Dense_1'
+        )  
+        self.dense2 = tf.keras.layers.Dense(
+            3000,
+            name='Dense_2'
+        )
+        self.output = tf.keras.layers.Dense(
+            self.config['n_mels'],
+            name='Dense_Output'
+        )    
 
 
     def call(self, inputs, training=False):
         """Call logic."""
-        output = self.dense(inputs)
+        output = self.input(inputs, activation='linear')
+        output = self.dense1(inputs, activation='relu')
+        output = self.dense2(inputs, activation='relu')
+        output = self.output(inputs, activation='linear')
         return output
 
 
