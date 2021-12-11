@@ -10,8 +10,8 @@ import numpy as np
 import tensorflow_tts
 from tensorflow_tts.inference import TFAutoModel
 
-from discriminator import make_discriminator_model
-from generator import Generator
+from models.discriminator import make_discriminator_model
+from models.generator import Generator
 
 from trainer import Trainer
 from dataset_manager import CharactorMelDataset
