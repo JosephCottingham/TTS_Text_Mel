@@ -17,7 +17,7 @@ class Trainer():
     test_strings = [
         'Hello my name is Joe. Nice to meet you!',
         'Hello my name is Joey. Nice to meet you!',
-        'The quick fox jumps over lazy dog.',
+        'The quick fox jumps over the lazy dog.',
         'To be or not to be.',
         'How was your day honey.',
         'This weekend will be fun!'
@@ -422,8 +422,8 @@ class Trainer():
         base_dirname = os.path.join(self.save_paths['predictions'], f'{self.steps}-steps')
         os.makedirs(base_dirname)
 
-        img_dirname = os.path.join(self.save_paths['predictions'], 'img')
-        audio_dirname = os.path.join(self.save_paths['predictions'], 'audio')
+        img_dirname = os.path.join(base_dirname, 'img')
+        audio_dirname = os.path.join(base_dirname, 'audio')
         os.makedirs(img_dirname)
         os.makedirs(audio_dirname)
 
