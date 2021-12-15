@@ -142,3 +142,5 @@ cython_debug/
 */exp
 gan/LJSpeech-1.1.tar.bz2
 cus/dataset_csvs/
+LJSpeech-1.1/*
+LJSpeech-1.1.tar.bz2

@@ -2,36 +2,68 @@
 import tensorflow as tf
 import numpy as np
 
+
 class Post_Matching(tf.keras.layers.Layer):
 
     def __init__(self, config, **kwargs):
         super().__init__(**kwargs)
 
         self.config = config
-        self.input = tf.keras.layers.Dense(
+        self.input_layer = tf.keras.layers.Dense(
             self.config['n_mels'],
-            name='Dense_Input'
+            name='Dense_Input',
+            activation='linear'
+        )
+        self.dense1 = tf.keras.layers.SimpleRNN(
+            3000,
+            name='SimpleRNN_1',
+            activation='relu'
+        )  
+        self.dense2 = tf.keras.layers.SimpleRNN(
+            3000,
+            name='SimpleRNN_2',
+            activation='relu'
+        )
+        self.output_layer = tf.keras.layers.Dense(
+            self.config['n_mels'],
+            name='Dense_Output',
+            activation='linear'
+        )   
+
+class Post_Matching_Dense(tf.keras.layers.Layer):
+
+    def __init__(self, config, **kwargs):
+        super().__init__(**kwargs)
+
+        self.config = config
+        self.input_layer = tf.keras.layers.Dense(
+            self.config['n_mels'],
+            name='Dense_Input',
+            activation='linear'
         )
         self.dense1 = tf.keras.layers.Dense(
             3000,
-            name='Dense_1'
+            name='Dense_1',
+            activation='relu'
         )  
         self.dense2 = tf.keras.layers.Dense(
             3000,
-            name='Dense_2'
+            name='Dense_2',
+            activation='relu'
         )
-        self.output = tf.keras.layers.Dense(
+        self.output_layer = tf.keras.layers.Dense(
             self.config['n_mels'],
-            name='Dense_Output'
+            name='Dense_Output',
+            activation='linear'
         )    
 
 
     def call(self, inputs, training=False):
         """Call logic."""
-        output = self.input(inputs, activation='linear')
-        output = self.dense1(inputs, activation='relu')
-        output = self.dense2(inputs, activation='relu')
-        output = self.output(inputs, activation='linear')
+        output = self.input_layer(inputs)
+        output = self.dense1(inputs)
+        output = self.dense2(inputs)
+        output = self.output_layer(inputs)
         return output
 
 
